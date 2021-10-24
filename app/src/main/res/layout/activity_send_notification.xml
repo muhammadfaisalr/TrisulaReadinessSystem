@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.SendNotificationActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/imageBottom"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/imageBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:fontFamily="@font/lato_bold"
+            android:lineHeight="24dp"
+            android:text="@string/send_warning"
+            android:textColor="@color/brownPrimary"
+            android:textSize="24sp" />
+
+        <RadioGroup
+            android:id="@+id/groupRadio"
+            android:layout_margin="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/radioApelKesiapsiagaan">
+
+            <RadioButton
+                android:id="@+id/radioApelKesiapsiagaan"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/apel_kesiapsiagaan"/>
+
+            <RadioButton
+                android:id="@+id/radioApelLuarBiasa"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/apel_luar_biasa"/>
+
+            <RadioButton
+                android:id="@+id/radioBantuanKepolisian"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bantuan_kepolisian"/>
+
+            <RadioButton
+                android:id="@+id/radioAlarmStelling"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alarm_stelling"/>
+
+            <RadioButton
+                android:id="@+id/radioBahayaKebakaran"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bahaya_kebakaran"/>
+
+            <RadioButton
+                android:id="@+id/radioBencanaAlam"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/bencana_alam"/>
+
+            <RadioButton
+                android:id="@+id/radioTandaAman"
+                android:textSize="16sp"
+                android:fontFamily="@font/lato"
+                android:letterSpacing="0.08"
+                android:padding="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tanda_aman"/>
+
+        </RadioGroup>
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/exfabSend"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/send"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_above="@id/imageBottom"
+        android:layout_margin="24dp"
+        app:backgroundTint="@color/brownPrimary"
+        android:textColor="@color/white"/>
+
+
+    <ImageView
+        android:visibility="invisible"
+        android:id="@+id/imageBottom"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_infantry" />
+
+</RelativeLayout>

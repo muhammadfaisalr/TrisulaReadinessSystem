@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/greenPrimary"
+    android:orientation="vertical"
+    tools:context=".activity.ProfileActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:foreground="?attr/selectableItemBackground"
+            android:id="@+id/imageBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/grayPrimary" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/circleProfile"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_gravity="center"
+            android:layout_margin="24dp"
+            app:cardBackgroundColor="@color/grayPrimary"
+            app:cardCornerRadius="128dp"
+            app:civ_circle_background_color="@color/brownPrimary">
+
+            <TextView
+                android:id="@+id/textInitial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/lato_bold"
+                android:gravity="center"
+                android:text="ZA"
+                android:textColor="@color/brownPrimary"
+                android:textSize="48sp" />
+
+
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/textName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/lato_bold"
+            android:text="Komandan A"
+            android:textColor="@color/grayPrimary"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_marginTop="8dp"
+            android:id="@+id/textPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/lato"
+            android:text="Komandan A"
+            android:textColor="@color/grayPrimary"
+            android:textSize="14sp" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/grayPrimary"
+            app:cardCornerRadius="8dp"
+            android:layout_margin="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/see_account_information"
+                    android:fontFamily="@font/lato"
+                    android:textColor="@color/brownPrimary"
+                    android:id="@+id/textAccountInfo"
+                    android:foreground="?attr/selectableItemBackground"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/brownLight"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/change_password"
+                    android:fontFamily="@font/lato"
+                    android:textColor="@color/brownPrimary"
+                    android:id="@+id/textChangePassword"
+                    android:foreground="?attr/selectableItemBackground"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/grayPrimary"
+            app:cardCornerRadius="8dp"
+            android:layout_marginHorizontal="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/about_app"
+                    android:fontFamily="@font/lato"
+                    android:textColor="@color/brownPrimary"
+                    android:id="@+id/textAboutApp"
+                    android:foreground="?attr/selectableItemBackground"/>
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/brownLight"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/term_of_service"
+                    android:fontFamily="@font/lato"
+                    android:textColor="@color/brownPrimary"
+                    android:id="@+id/textTos"
+                    android:foreground="?attr/selectableItemBackground"/>
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        app:backgroundTint="@color/grayPrimary"
+        android:layout_alignParentBottom="true"
+        app:cornerRadius="8dp"
+        android:padding="16dp"
+        android:text="@string/logout"
+        android:textColor="#EF5350"
+        android:textAlignment="textStart"/>
+
+</RelativeLayout>

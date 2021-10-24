@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "789081273852",
+    "project_id": "trisula-readiness-system",
+    "storage_bucket": "trisula-readiness-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:789081273852:android:7acd89523c88d568f5ee79",
+        "android_client_info": {
+          "package_name": "id.muhammadfaisal.trisula"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "789081273852-i7acik68gtmmkg00pbimbh4ghnlu3os9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "id.muhammadfaisal.trisula",
+            "certificate_hash": "0f28a60f388e712620103d595c42fa4a35c9ab54"
+          }
+        },
+        {
+          "client_id": "789081273852-2iisnbbmvs70mtr43ols75io2jhpo6f5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwXnUw79FdvhwPPaNr1mdIuYOs0C155gQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "789081273852-2iisnbbmvs70mtr43ols75io2jhpo6f5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
