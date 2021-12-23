@@ -71,9 +71,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                             MessagingHelper.subscribe(groupIdGenerated)
                             this@MainActivity.groups.add(group)
                         }else{
+
                             //Search by Group ID
                             if (DataHelper.setGroupId(groupId) == groupIdGenerated){
                                 this@MainActivity.groups.add(group)
+                                MessagingHelper.subscribe(groupIdGenerated)
                             }
                         }
                     }

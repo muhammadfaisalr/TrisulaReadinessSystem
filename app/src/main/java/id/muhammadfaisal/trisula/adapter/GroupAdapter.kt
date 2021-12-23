@@ -13,6 +13,7 @@ import id.muhammadfaisal.trisula.activity.DetailInboxActivity
 import id.muhammadfaisal.trisula.databinding.ItemGroupBinding
 import id.muhammadfaisal.trisula.helper.DataHelper
 import id.muhammadfaisal.trisula.helper.GeneralHelper
+import id.muhammadfaisal.trisula.helper.RoomHelper
 import id.muhammadfaisal.trisula.model.firebase.GroupModelFirebase
 import id.muhammadfaisal.trisula.utils.Constant
 
@@ -21,12 +22,13 @@ class GroupAdapter(var context: Context, var groups: ArrayList<GroupModelFirebas
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         private var binding = ItemGroupBinding.bind(this.itemView)
+        private var userDao = RoomHelper.userDao(context = this.binding.root.context)
 
         @SuppressLint("SetTextI18n")
         fun bind(context: Context, groupModelFirebase: GroupModelFirebase) {
 
             this.binding.textTitle.text = groupModelFirebase.name
-            this.binding.textUsers.text = "${groupModelFirebase.users?.filterNotNull()!!.size} Anggota"
+            this.binding.textUsers.text = "${userDao.getTotalUserInGroup(groupModelFirebase.name!!)} Anggota"
             this.binding.imageLogo.setImageResource(DataHelper.getGroupImage(groupModelFirebase.name!!))
 
             this.itemView.setOnClickListener{

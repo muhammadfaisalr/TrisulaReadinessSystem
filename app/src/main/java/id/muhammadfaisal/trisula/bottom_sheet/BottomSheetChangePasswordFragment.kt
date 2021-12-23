@@ -43,10 +43,6 @@ class BottomSheetChangePasswordFragment : BottomSheetDialogFragment(), View.OnCl
         this.init()
     }
 
-    private fun setup() {
-
-    }
-
     private fun init() {
         this.binding.buttonSave.setOnClickListener(this)
     }

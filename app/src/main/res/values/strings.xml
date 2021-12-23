@@ -56,4 +56,5 @@
     <string name="member_deleted">Anggota Berhasil Dihapus!</string>
     <string name="add_super_admin">Tambah Admin</string>
     <string name="desc_add_super_admin">Tambah Admin Untuk Membantu Anda Mengatur Aplikasi</string>
+    <string name="member_can_t_be_empty">Anggota Tidak Boleh Kosong.</string>
 </resources>

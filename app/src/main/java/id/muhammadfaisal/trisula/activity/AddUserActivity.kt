@@ -10,12 +10,14 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import id.muhammadfaisal.trisula.R
+import id.muhammadfaisal.trisula.database.entity.UserEntity
 import id.muhammadfaisal.trisula.utils.BottomSheets
 import id.muhammadfaisal.trisula.databinding.ActivityAddUserBinding
 import id.muhammadfaisal.trisula.helper.AuthHelper
 import id.muhammadfaisal.trisula.utils.Constant
 import id.muhammadfaisal.trisula.helper.DatabaseHelper
 import id.muhammadfaisal.trisula.helper.GeneralHelper
+import id.muhammadfaisal.trisula.helper.RoomHelper
 import id.muhammadfaisal.trisula.model.firebase.GroupModelFirebase
 import id.muhammadfaisal.trisula.model.firebase.UserModelFirebase
 import id.muhammadfaisal.trisula.model.view.ErrorModel
@@ -74,6 +76,8 @@ class AddUserActivity : AppCompatActivity(), View.OnClickListener {
         val loading = Loading(this)
         loading.setCancelable(false)
         loading.show()
+
+        val userDao = RoomHelper.userDao(this)
 
         val isValidated = this.validate(
             this.binding.inputEmail,
@@ -141,6 +145,7 @@ class AddUserActivity : AppCompatActivity(), View.OnClickListener {
                                     accounts.add(it.user!!.uid)
 
                                     if (next){
+                                        userDao.insert(UserEntity(null, name.toString(), email.toString(), phone.toString().toLong(), groupId, null))
                                         DatabaseHelper
                                             .getUserInGroupReference(this@AddUserActivity.groupId!!)
                                             .setValue(accounts)
@@ -182,6 +187,7 @@ class AddUserActivity : AppCompatActivity(), View.OnClickListener {
                                 .signInWithEmailPassword(currentEmail, currentPassword)
                                 .addOnSuccessListener {
                                     loading.dismiss()
+
                                     GeneralHelper.move(this, SuccessActivity::class.java, bundle,true)
                                 }
                                 .addOnFailureListener{

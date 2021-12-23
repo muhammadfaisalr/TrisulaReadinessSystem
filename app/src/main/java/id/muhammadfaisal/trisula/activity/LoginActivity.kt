@@ -9,6 +9,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import id.muhammadfaisal.trisula.R
+import id.muhammadfaisal.trisula.TrisulaApplication
+import id.muhammadfaisal.trisula.database.dao.UserDao
+import id.muhammadfaisal.trisula.database.entity.UserEntity
 import id.muhammadfaisal.trisula.utils.BottomSheets
 import id.muhammadfaisal.trisula.databinding.ActivityLoginBinding
 import id.muhammadfaisal.trisula.helper.*
@@ -60,6 +63,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun processLogin() {
+        val userDao = RoomHelper.userDao(this)
         val loading = Loading(this)
         loading.setCancelable(false)
         loading.show()
@@ -104,19 +108,44 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                                     SharedPreferences.save(this@LoginActivity, Constant.Key.USER_EMAIL, user.email!!)
                                     SharedPreferences.save(this@LoginActivity, Constant.Key.USER_PASSWORD, user.password!!)
 
-                                    when (user.roleId) {
-                                        Constant.Role.SUPER_ADMIN -> {
-                                            GeneralHelper.move(this@LoginActivity, MainActivity::class.java, true)
-                                        }
-                                        Constant.Role.ADMIN -> {
-                                            SharedPreferences.save(this@LoginActivity, Constant.Key.GROUP_ID, user.groupId!!)
-                                            GeneralHelper.move(this@LoginActivity, MainActivity::class.java, true)
-                                        }
-                                        else -> {
-                                            SharedPreferences.save(this@LoginActivity, Constant.Key.GROUP_ID, user.groupId!!)
-                                            GeneralHelper.move(this@LoginActivity, MemberActivity::class.java, true)
-                                        }
+                                    if (AuthHelper.getCurrentUser() != null) {
+                                        DatabaseHelper.getUserReference().addValueEventListener(object : ValueEventListener {
+                                            override fun onDataChange(snapshot: DataSnapshot) {
+                                                val sizeFirebase = snapshot.childrenCount
+                                                val sizeRoom = userDao.getAll().size
+
+                                                if (userDao.getAll().isEmpty()){
+                                                    this@LoginActivity.loopData(snapshot, userDao)
+                                                } else {
+                                                    if (sizeFirebase != sizeRoom.toLong()) {
+                                                        userDao.deleteAll()
+                                                        this@LoginActivity.loopData(snapshot, userDao)
+                                                    }
+                                                }
+
+
+                                                when (user.roleId) {
+                                                    Constant.Role.SUPER_ADMIN -> {
+                                                        GeneralHelper.move(this@LoginActivity, MainActivity::class.java, true)
+                                                    }
+                                                    Constant.Role.ADMIN -> {
+                                                        SharedPreferences.save(this@LoginActivity, Constant.Key.GROUP_ID, user.groupId!!)
+                                                        GeneralHelper.move(this@LoginActivity, MainActivity::class.java, true)
+                                                    }
+                                                    else -> {
+                                                        SharedPreferences.save(this@LoginActivity, Constant.Key.GROUP_ID, user.groupId!!)
+                                                        GeneralHelper.move(this@LoginActivity, MemberActivity::class.java, true)
+                                                    }
+                                                }
+                                            }
+
+                                            override fun onCancelled(error: DatabaseError) {
+                                                Log.d(TrisulaApplication::class.simpleName, error.message)
+                                            }
+
+                                        })
                                     }
+
                                 }
 
                                 override fun onCancelled(error: DatabaseError) {
@@ -148,6 +177,21 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                         )
                     }
             }
+        }
+    }
+    private fun loopData(snapshot: DataSnapshot, userDao: UserDao) {
+        for (data in snapshot.children) {
+            val user = data.getValue(UserModelFirebase::class.java)!!
+            userDao.insert(
+                UserEntity(
+                    null,
+                    user.name!!,
+                    user.email!!,
+                    user.phoneNumber!!,
+                    user.groupId!!,
+                    null
+                )
+            )
         }
     }
 }

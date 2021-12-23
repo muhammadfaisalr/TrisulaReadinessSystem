@@ -16,9 +16,11 @@ import com.google.firebase.database.ValueEventListener
 import id.muhammadfaisal.trisula.R
 import id.muhammadfaisal.trisula.activity.DetailGroupActivity
 import id.muhammadfaisal.trisula.activity.SuccessActivity
+import id.muhammadfaisal.trisula.database.entity.UserEntity
 import id.muhammadfaisal.trisula.databinding.ItemUserBinding
 import id.muhammadfaisal.trisula.helper.DatabaseHelper
 import id.muhammadfaisal.trisula.helper.GeneralHelper
+import id.muhammadfaisal.trisula.helper.RoomHelper
 import id.muhammadfaisal.trisula.model.firebase.UserModelFirebase
 import id.muhammadfaisal.trisula.model.view.ErrorModel
 import id.muhammadfaisal.trisula.ui.Loading
@@ -27,7 +29,7 @@ import id.muhammadfaisal.trisula.utils.Constant
 
 class UserAdapter(
     var context: Context,
-    var users: ArrayList<UserModelFirebase>,
+    var users: ArrayList<UserEntity>,
     var groupName: String
 ) : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -37,17 +39,21 @@ class UserAdapter(
         fun bind(
             context: Context,
             position: Int,
-            userModelFirebase: UserModelFirebase,
+            userModelFirebase: UserEntity,
             groupName: String
         ) {
             binding.textPosition.text = (position + 1).toString()
             binding.textName.text = userModelFirebase.name
-            binding.textPhone.text = "+62 ${userModelFirebase.phoneNumber.toString()}"
+            binding.textPhone.text = "+62 ${userModelFirebase.phoneNumber}"
 
             binding.imageDelete.setOnClickListener {
                 val loading = Loading(context)
                 loading.setCancelable(false)
                 loading.show()
+
+                var isDeleted = false
+
+                val userDao = RoomHelper.userDao(context)
 
                 val bundle = Bundle()
                 bundle.putString(
@@ -55,7 +61,9 @@ class UserAdapter(
                     context.getString(R.string.member_deleted)
                 )
 
+                val users = ArrayList<String>()
                 var userId: String? = null
+
                 DatabaseHelper
                     .getUserReference()
                     .addValueEventListener(object : ValueEventListener {
@@ -64,57 +72,81 @@ class UserAdapter(
                                 val data = userSnapshot.getValue(UserModelFirebase::class.java)!!
 
                                 if (userModelFirebase.email == data.email) {
-                                    //dapetin key nya
+                                    //Key Child
                                     userId = userSnapshot.key
+
                                 }
                             }
 
-                            val userInGroupReference =
-                                DatabaseHelper.getUserInGroupReference(groupName)
 
-                            userInGroupReference
-                                .addValueEventListener(object : ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
+                            val userInGroupReference = DatabaseHelper.getUserInGroupReference(groupName)
 
-                                        if (snapshot.childrenCount > 1) {
-                                            for (userSnapshot in snapshot.children) {
-                                                val data =
-                                                    userSnapshot.getValue(String::class.java)!!
+                            userInGroupReference.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
 
-                                                if (data == userId) {
-                                                    //Key nya sesuai dengan data
-                                                    userInGroupReference.child(userSnapshot.key!!)
-                                                        .removeValue().addOnSuccessListener {
-                                                        loading.dismiss()
-                                                        GeneralHelper.move(
-                                                            context,
-                                                            SuccessActivity::class.java,
-                                                            bundle,
-                                                            true
-                                                        )
-                                                    }
-                                                }
-                                            }
+                                    for (userSnapshot in snapshot.children) {
+                                        val data = userSnapshot.getValue(String::class.java)!!
+
+                                        if (data != userId) {
+                                            /*Jika key nya tidak sama dengan data yg dihapus
+                                            maka tambah ke arraylist*/
+                                            users.add(data)
+                                        } else {
+                                            //Jika key sama, delete.
+                                            userInGroupReference
+                                                .child(userSnapshot.key!!)
+                                                .removeValue()
                                         }
-
-
                                     }
 
-                                    override fun onCancelled(error: DatabaseError) {
-                                        loading.dismiss()
-                                        BottomSheets.error(
-                                            ErrorModel(
-                                                error.code.toString(),
-                                                error.message,
-                                                error.details
-                                            ),
-                                            context as AppCompatActivity,
-                                            true,
-                                            null
-                                        )
+                                    if (!isDeleted){
+
+                                        userDao.delete(email = userModelFirebase.email)
+
+                                        DatabaseHelper
+                                            .getAccountReference(userId!!)
+                                            .removeValue()
+                                            .addOnSuccessListener {
+                                                isDeleted = true
+                                            }
                                     }
 
-                                })
+                                    userInGroupReference
+                                        .setValue(users)
+                                        .addOnSuccessListener {
+                                            loading.dismiss()
+                                            GeneralHelper.move(
+                                                context,
+                                                SuccessActivity::class.java,
+                                                bundle,
+                                                true
+                                            )
+                                        }
+                                        .addOnFailureListener {
+                                            loading.dismiss()
+                                            BottomSheets.error(
+                                                ErrorModel(null, it.message, it.message),
+                                                context as AppCompatActivity,
+                                                true,
+                                                null
+                                            )
+                                        }
+                                }
+
+                                override fun onCancelled(error: DatabaseError) {
+                                    loading.dismiss()
+                                    BottomSheets.error(
+                                        ErrorModel(
+                                            error.code.toString(),
+                                            error.message,
+                                            error.details
+                                        ),
+                                        context as AppCompatActivity,
+                                        true,
+                                        null
+                                    )
+                                }
+                            })
                         }
 
                         override fun onCancelled(error: DatabaseError) {

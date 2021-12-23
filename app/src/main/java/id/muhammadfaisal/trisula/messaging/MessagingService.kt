@@ -182,8 +182,7 @@ class MessagingService : FirebaseMessagingService() {
             .setSound(sound, AudioManager.STREAM_NOTIFICATION)
 
         val notificationBuild = notification.build()
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(channelId, notificationBuild)
     }
 

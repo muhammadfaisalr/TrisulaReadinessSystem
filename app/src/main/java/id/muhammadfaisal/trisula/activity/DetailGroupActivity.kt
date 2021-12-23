@@ -14,14 +14,17 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import id.muhammadfaisal.trisula.adapter.UserAdapter
+import id.muhammadfaisal.trisula.database.entity.UserEntity
 import id.muhammadfaisal.trisula.utils.BottomSheets
 import id.muhammadfaisal.trisula.databinding.ActivityDetailGroupBinding
 import id.muhammadfaisal.trisula.helper.DataHelper
 import id.muhammadfaisal.trisula.utils.Constant
 import id.muhammadfaisal.trisula.helper.DatabaseHelper
 import id.muhammadfaisal.trisula.helper.GeneralHelper
+import id.muhammadfaisal.trisula.helper.RoomHelper
 import id.muhammadfaisal.trisula.model.firebase.UserModelFirebase
 import id.muhammadfaisal.trisula.model.view.ErrorModel
+import id.muhammadfaisal.trisula.ui.Loading
 import id.muhammadfaisal.trisula.utils.SharedPreferences
 
 class DetailGroupActivity : AppCompatActivity(), View.OnClickListener {
@@ -41,7 +44,7 @@ class DetailGroupActivity : AppCompatActivity(), View.OnClickListener {
         this.setupBehavior()
     }
 
-    private fun init(){
+    private fun init() {
         this.binding.imageLogo.setImageResource(DataHelper.getGroupImage(this.groupName))
 
         this.binding.imageMessage.setOnClickListener(this)
@@ -55,7 +58,7 @@ class DetailGroupActivity : AppCompatActivity(), View.OnClickListener {
 
         val roleId = SharedPreferences.get(this, Constant.Key.ROLE_ID)
 
-        if (roleId != Constant.Role.SUPER_ADMIN){
+        if (roleId != Constant.Role.SUPER_ADMIN) {
             this.binding.buttonAdd.visibility = View.GONE
         }
 
@@ -64,85 +67,30 @@ class DetailGroupActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupBehavior() {
+        val userDao = RoomHelper.userDao(this)
+        val users: ArrayList<UserEntity> = ArrayList()
+        val usersInGroup = userDao.getUserInGroup(groupName)
+
+        for (i in usersInGroup){
+            users.add(i)
+        }
+
         val bindingBehavior = this.binding.behavior
         val bottomSheetBehavior = BottomSheetBehavior.from(bindingBehavior.behavior)
-        bottomSheetBehavior.peekHeight = GeneralHelper.getScreenHeight() / 3 + 400
+        bottomSheetBehavior.peekHeight = GeneralHelper.getScreenHeight() / 4
         bottomSheetBehavior.isHideable = false
         bottomSheetBehavior.isDraggable = true
 
-        val strings = ArrayList<String>()
-        DatabaseHelper.getUserInGroupReference(this.binding.textTitle.text.toString()).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for (data in snapshot.children) {
-                    val user = data.getValue(String::class.java)
+        bindingBehavior.textTotalUser.text = "${users.size} Anggota"
 
-                    if (user != null) {
-                        strings.add(user)
-
-                        val users = ArrayList<UserModelFirebase>()
-                        for (user2 in strings) {
-                            DatabaseHelper.getUserReference()
-                                .addValueEventListener(object : ValueEventListener {
-                                    override fun onDataChange(snapshot: DataSnapshot) {
-                                        for (data2 in snapshot.children) {
-                                            Log.d(
-                                                DetailGroupActivity::class.java.simpleName,
-                                                "Start Validating User ID ${data2.key}"
-                                            )
-                                            if (data2.key == user2) {
-                                                users.add(data2.getValue(UserModelFirebase::class.java)!!)
-
-                                                bindingBehavior.recyclerUser.layoutManager =
-                                                    LinearLayoutManager(
-                                                        this@DetailGroupActivity,
-                                                        RecyclerView.VERTICAL,
-                                                        false
-                                                    )
-
-                                                bindingBehavior.textTotalUser.text = "${users.size} Anggota"
-
-                                                bindingBehavior.recyclerUser.adapter =
-                                                    UserAdapter(this@DetailGroupActivity,
-                                                        users, groupName)
-
-                                                bindingBehavior.recyclerUser.addItemDecoration(
-                                                    DividerItemDecoration(
-                                                        this@DetailGroupActivity,
-                                                        RecyclerView.VERTICAL
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-
-                                    override fun onCancelled(error: DatabaseError) {
-                                        BottomSheets.error(
-                                            ErrorModel(error.code.toString(), error.message, error.details),
-                                            this@DetailGroupActivity,
-                                            true,
-                                            null
-                                        )
-                                    }
-
-                                })
-                        }
-
-                    }else{
-                    }
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                BottomSheets.error(
-                    ErrorModel(error.code.toString(), error.message, error.details),
-                    this@DetailGroupActivity,
-                    true,
-                    null
-                )
-            }
-        })
-
-
+        bindingBehavior.recyclerUser.adapter = UserAdapter(this, users, groupName)
+        bindingBehavior.recyclerUser.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        bindingBehavior.recyclerUser.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                RecyclerView.VERTICAL
+            )
+        )
 
         bindingBehavior.buttonAdd.setOnClickListener {
             val bundle = Bundle()
@@ -162,7 +110,10 @@ class DetailGroupActivity : AppCompatActivity(), View.OnClickListener {
                 GeneralHelper.move(this, InboxActivity::class.java, bundle, false)
             }
             this.binding.buttonSend -> {
-                bundle.putString(Constant.Key.GROUP_ID, DataHelper.setGroupId(this.binding.textTitle.text.toString()))
+                bundle.putString(
+                    Constant.Key.GROUP_ID,
+                    DataHelper.setGroupId(this.binding.textTitle.text.toString())
+                )
                 GeneralHelper.move(this, SendNotificationActivity::class.java, bundle, false)
             }
             this.binding.imageBack -> {
